@@ -18,9 +18,7 @@ package org.mybatis.spring.batch
 import org.springframework.util.Assert.isTrue
 import org.springframework.util.Assert.notNull
 
-import org.apache.ibatis.executor.BatchResult
-import org.apache.ibatis.logging.Log
-import org.apache.ibatis.logging.LogFactory
+import org.mybatis.logging.LoggerFactory
 import org.apache.ibatis.session.ExecutorType
 import org.apache.ibatis.session.SqlSessionFactory
 import org.mybatis.spring.SqlSessionTemplate
@@ -33,23 +31,20 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException
  * `ItemWriter` that uses the batching features from
  * `SqlSessionTemplate` to execute a batch of statements for all items
  * provided.
-
+ *
  * Provided to facilitate the migration from Spring-Batch iBATIS 2 writers to MyBatis 3
-
+ *
  * The user must provide a MyBatis statement id that points to the SQL statement defined
  * in the MyBatis.
-
+ *
  * It is expected that [.write] is called inside a transaction. If it is not
  * each statement call will be autocommitted and flushStatements will return no results.
-
+ *
  * The writer is thread safe after its properties are set (normal singleton
  * behavior), so it can be used to write in multiple concurrent transactions.
-
+ *
  * @author Eduardo Macarron
- * *
- * *
  * @since 1.1.0
- * *
  * @version $Id$
  */
 class MyBatisBatchItemWriter<T> : ItemWriter<T>, InitializingBean {
@@ -57,7 +52,7 @@ class MyBatisBatchItemWriter<T> : ItemWriter<T>, InitializingBean {
   /**
    * Public setter for the [SqlSessionTemplate].
    *
-   * @param SqlSessionTemplate the SqlSessionTemplate
+   * @param sqlSessionTemplate the SqlSessionTemplate
    */
   var sqlSessionTemplate: SqlSessionTemplate? = null
 
@@ -80,7 +75,7 @@ class MyBatisBatchItemWriter<T> : ItemWriter<T>, InitializingBean {
   /**
    * Public setter for [SqlSessionFactory] for injection purposes.
    *
-   * @param SqlSessionFactory sqlSessionFactory
+   * @param sqlSessionFactory SqlSessionFactory
    */
   fun setSqlSessionFactory(sqlSessionFactory: SqlSessionFactory) {
     if (sqlSessionTemplate == null) {
@@ -104,9 +99,7 @@ class MyBatisBatchItemWriter<T> : ItemWriter<T>, InitializingBean {
 
     if (!items.isEmpty()) {
 
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Executing batch with " + items.size + " items.")
-      }
+      LOGGER.debug {"Executing batch with ${items.size} items."}
 
       for (item in items) {
         sqlSessionTemplate!!.update(statementId!!, item!!)
@@ -117,7 +110,7 @@ class MyBatisBatchItemWriter<T> : ItemWriter<T>, InitializingBean {
       if (assertUpdates) {
         if (results!!.size != 1) {
           throw InvalidDataAccessResourceUsageException("Batch execution returned invalid results. " +
-              "Expected 1 but number of BatchResult objects returned was " + results.size)
+              "Expected 1 but number of BatchResult objects returned was ${results.size}")
         }
 
         val updateCounts = results[0].updateCounts
@@ -125,8 +118,7 @@ class MyBatisBatchItemWriter<T> : ItemWriter<T>, InitializingBean {
         for (i in updateCounts.indices) {
           val value = updateCounts[i]
           if (value == 0) {
-            throw EmptyResultDataAccessException("Item " + i + " of " + updateCounts.size
-                + " did not update any rows: [" + items[i] + "]", 1)
+            throw EmptyResultDataAccessException("Item $i of ${updateCounts.size} did not update any rows: [${items[i]}]", 1)
           }
         }
       }
@@ -134,7 +126,7 @@ class MyBatisBatchItemWriter<T> : ItemWriter<T>, InitializingBean {
   }
 
   companion object {
-    private val LOGGER = LogFactory.getLog(MyBatisBatchItemWriter::class.java)
+    private val LOGGER = LoggerFactory.getLogger(MyBatisBatchItemWriter::class.java)
   }
 
 }

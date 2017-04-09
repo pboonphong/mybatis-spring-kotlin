@@ -42,19 +42,13 @@ import org.springframework.util.StringUtils
  * the specified types will be searched (searching for all interfaces will be
  * disabled).
  *
- *
  * This functionality was previously a private class of
  * [MapperScannerConfigurer], but was broken out in version 1.2.0.
-
+ *
  * @author Hunter Presnall
- * *
  * @author Eduardo Macarron
- * *
- * *
  * @see MapperFactoryBean
-
  * @since 1.2.0
- * *
  * @version $Id$
  */
 class ClassPathMapperScanner(registry: BeanDefinitionRegistry) : ClassPathBeanDefinitionScanner(registry, false) {
@@ -107,7 +101,6 @@ class ClassPathMapperScanner(registry: BeanDefinitionRegistry) : ClassPathBeanDe
     this.mapperFactoryBean = mapperFactoryBean ?: MapperFactoryBean<Any>()
   }
 
-
   /**
    * Configures parent scanner to search for the right interfaces. It can search
    * for all interfaces or just for those that extends a markerInterface or/and
@@ -153,7 +146,7 @@ class ClassPathMapperScanner(registry: BeanDefinitionRegistry) : ClassPathBeanDe
     val beanDefinitions = super.doScan(*basePackages)
 
     if (beanDefinitions.isEmpty()) {
-      logger.warn("No MyBatis mapper was found in '" + Arrays.toString(basePackages) + "' package. Please check your configuration.")
+      logger.warn("No MyBatis mapper was found in '${Arrays.toString(basePackages)}' package. Please check your configuration.")
     } else {
       processBeanDefinitions(beanDefinitions)
     }

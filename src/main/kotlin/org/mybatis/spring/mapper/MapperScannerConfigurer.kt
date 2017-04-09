@@ -125,30 +125,17 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
   private var processPropertyPlaceHolders: Boolean = false
 
   /**
-   * Gets beanNameGenerator to be used while running the scanner.
-
-   * @return the beanNameGenerator BeanNameGenerator that has been configured
-   * *
-   * @since 1.2.0
-   */
-  /**
-   * Sets beanNameGenerator to be used while running the scanner.
-
-   * @param nameGenerator the beanNameGenerator to set
-   * *
+   * Returns beanNameGenerator to be used while running the scanner.
+   *
    * @since 1.2.0
    */
   var nameGenerator: BeanNameGenerator? = null
 
   /**
    * This property lets you set the base package for your mapper interface files.
-   *
-   *
    * You can set more than one package by using a semicolon or comma as a separator.
-   *
-   *
    * Mappers will be searched for recursively starting in the specified package(s).
-
+   *
    * @param basePackage base package name
    */
   fun setBasePackage(basePackage: String) {
@@ -157,9 +144,8 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
 
   /**
    * Same as `MapperFactoryBean#setAddToConfig(boolean)`.
-
+   *
    * @param addToConfig
-   * *
    * @see MapperFactoryBean.setAddToConfig
    */
   fun setAddToConfig(addToConfig: Boolean) {
@@ -169,13 +155,11 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
   /**
    * This property specifies the annotation that the scanner will search for.
    *
-   *
    * The scanner will register all interfaces in the base package that also have the
    * specified annotation.
    *
-   *
    * Note this can be combined with markerInterface.
-
+   *
    * @param annotationClass annotation class
    */
   fun setAnnotationClass(annotationClass: Class<out Annotation>) {
@@ -185,13 +169,11 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
   /**
    * This property specifies the parent that the scanner will search for.
    *
-   *
    * The scanner will register all interfaces in the base package that also have the
    * specified interface class as a parent.
    *
-   *
    * Note this can be combined with annotationClass.
-
+   *
    * @param superClass parent class
    */
   fun setMarkerInterface(superClass: Class<*>) {
@@ -202,7 +184,6 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
    * Specifies which `SqlSessionTemplate` to use in the case that there is
    * more than one in the spring context. Usually this is only needed when you
    * have more than one datasource.
-   *
    *
    * @param sqlSessionTemplate
    */
@@ -216,14 +197,11 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
    * more than one in the spring context. Usually this is only needed when you
    * have more than one datasource.
    *
-   *
    * Note bean names are used, not bean references. This is because the scanner
    * loads early during the start process and it is too early to build mybatis
    * object instances.
-
+   *
    * @since 1.1.0
-   * *
-   * *
    * @param sqlSessionTemplateName Bean name of the `SqlSessionTemplate`
    */
   fun setSqlSessionTemplateBeanName(sqlSessionTemplateName: String) {
@@ -235,10 +213,9 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
    * more than one in the spring context. Usually this is only needed when you
    * have more than one datasource.
    *
-   *
    * @param sqlSessionFactory
    */
-  @Deprecated("Use {@link #setSqlSessionFactoryBeanName(String)} instead.\n   \n    ")
+  @Deprecated("Use {@link #setSqlSessionFactoryBeanName(String)} instead.")
   fun setSqlSessionFactory(sqlSessionFactory: SqlSessionFactory) {
     this.sqlSessionFactory = sqlSessionFactory
   }
@@ -248,14 +225,11 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
    * more than one in the spring context. Usually this is only needed when you
    * have more than one datasource.
    *
-   *
    * Note bean names are used, not bean references. This is because the scanner
    * loads early during the start process and it is too early to build mybatis
    * object instances.
-
+   *
    * @since 1.1.0
-   * *
-   * *
    * @param sqlSessionFactoryName Bean name of the `SqlSessionFactory`
    */
   fun setSqlSessionFactoryBeanName(sqlSessionFactoryName: String) {
@@ -263,10 +237,7 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
   }
 
   /**
-
    * @since 1.1.1
-   * *
-   * *
    * @param processPropertyPlaceHolders
    */
   fun setProcessPropertyPlaceHolders(processPropertyPlaceHolders: Boolean) {
@@ -304,7 +275,6 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
 
   /**
    * {@inheritDoc}
-
    * @since 1.0.2
    */
   override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {

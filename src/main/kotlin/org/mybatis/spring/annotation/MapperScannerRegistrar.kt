@@ -35,18 +35,12 @@ import org.springframework.util.StringUtils
  * MyBatis mapper scanning. Using an @Enable annotation allows beans to be
  * registered via @Component configuration, whereas implementing
  * `BeanDefinitionRegistryPostProcessor` will work for XML configuration.
-
+ *
  * @author Michael Lanyon
- * *
  * @author Eduardo Macarron
- * *
- * *
  * @see MapperFactoryBean
-
  * @see ClassPathMapperScanner
-
  * @since 1.2.0
- * *
  * @version $Id$
  */
 class MapperScannerRegistrar : ImportBeanDefinitionRegistrar, ResourceLoaderAware {
@@ -90,19 +84,9 @@ class MapperScannerRegistrar : ImportBeanDefinitionRegistrar, ResourceLoaderAwar
     scanner.setSqlSessionFactoryBeanName(annoAttrs.getString("sqlSessionFactoryRef"))
 
     val basePackages = ArrayList<String>()
-    for (pkg in annoAttrs.getStringArray("value")) {
-      if (StringUtils.hasText(pkg)) {
-        basePackages.add(pkg)
-      }
-    }
-    for (pkg in annoAttrs.getStringArray("basePackages")) {
-      if (StringUtils.hasText(pkg)) {
-        basePackages.add(pkg)
-      }
-    }
-    for (clazz in annoAttrs.getClassArray("basePackageClasses")) {
-      basePackages.add(ClassUtils.getPackageName(clazz))
-    }
+    annoAttrs.getStringArray("value").filterTo(basePackages) { StringUtils.hasText(it) }
+    annoAttrs.getStringArray("basePackages").filterTo(basePackages) { StringUtils.hasText(it) }
+    annoAttrs.getClassArray("basePackageClasses").mapTo(basePackages) { ClassUtils.getPackageName(it) }
     scanner.registerFilters()
     scanner.doScan(*StringUtils.toStringArray(basePackages))
   }

@@ -16,7 +16,7 @@
 package org.mybatis.spring
 
 import org.apache.ibatis.exceptions.PersistenceException
-import org.apache.ibatis.logging.LogFactory
+import org.mybatis.logging.LoggerFactory
 import org.apache.ibatis.session.ExecutorType
 import org.apache.ibatis.session.SqlSession
 import org.apache.ibatis.session.SqlSessionFactory
@@ -37,9 +37,13 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * @version $Id$
  */
 class SqlSessionUtils {
+
+  /**
+   * This class can't be instantiated, exposes static utility methods only.
+   */
   companion object {
 
-    private val LOGGER = LogFactory.getLog(SqlSessionUtils::class.java)
+    private val LOGGER = LoggerFactory.getLogger(SqlSessionUtils::class.java)
 
     /**
      * Creates a new MyBatis `SqlSession` from the `SqlSessionFactory`
@@ -79,10 +83,7 @@ class SqlSessionUtils {
         return session
       }
 
-      if (LOGGER.isDebugEnabled) {
-        LOGGER.debug("Creating a new SqlSession")
-      }
-
+      LOGGER.debug {"Creating a new SqlSession"}
       session = sessionFactory.openSession(executorType)
 
       registerSessionHolder(sessionFactory, executorType, exceptionTranslator, session)
@@ -110,9 +111,7 @@ class SqlSessionUtils {
         val environment = sessionFactory.configuration.environment
 
         if (environment.transactionFactory is SpringManagedTransactionFactory) {
-          if (LOGGER.isDebugEnabled) {
-            LOGGER.debug("Registering transaction synchronization for SqlSession [$session]")
-          }
+          LOGGER.debug {"Registering transaction synchronization for SqlSession [$session]"}
 
           holder = SqlSessionHolder(session, executorType, exceptionTranslator)
           TransactionSynchronizationManager.bindResource(sessionFactory, holder)
@@ -121,18 +120,14 @@ class SqlSessionUtils {
           holder.requested()
         } else {
           if (TransactionSynchronizationManager.getResource(environment.dataSource) == null) {
-            if (LOGGER.isDebugEnabled) {
-              LOGGER.debug("SqlSession [$session] was not registered for synchronization because DataSource is not transactional")
-            }
+            LOGGER.debug {"SqlSession [$session] was not registered for synchronization because DataSource is not transactional"}
           } else {
             throw TransientDataAccessResourceException(
                 "SqlSessionFactory must be using a SpringManagedTransactionFactory in order to use Spring transaction synchronization")
           }
         }
       } else {
-        if (LOGGER.isDebugEnabled) {
-          LOGGER.debug("SqlSession [$session] was not registered for synchronization because synchronization is not active")
-        }
+        LOGGER.debug {"SqlSession [$session] was not registered for synchronization because synchronization is not active"}
       }
     }
 
@@ -145,10 +140,7 @@ class SqlSessionUtils {
 
         holder.requested()
 
-        if (LOGGER.isDebugEnabled) {
-          LOGGER.debug("Fetched SqlSession [" + holder.sqlSession + "] from current transaction")
-        }
-
+        LOGGER.debug {"Fetched SqlSession [${holder.sqlSession}] from current transaction"}
         session = holder.sqlSession
       }
       return session
@@ -158,34 +150,27 @@ class SqlSessionUtils {
      * Checks if `SqlSession` passed as an argument is managed by Spring `TransactionSynchronizationManager`
      * If it is not, it closes it, otherwise it just updates the reference counter and
      * lets Spring call the close callback when the managed transaction ends
-
+     *
      * @param session
-     * *
      * @param sessionFactory
      */
     @JvmStatic
     fun closeSqlSession(session: SqlSession, sessionFactory: SqlSessionFactory) {
       val holder = TransactionSynchronizationManager.getResource(sessionFactory) as SqlSessionHolder?
       if (holder != null && holder.sqlSession === session) {
-        if (LOGGER.isDebugEnabled) {
-          LOGGER.debug("Releasing transactional SqlSession [$session]")
-        }
+        LOGGER.debug {"Releasing transactional SqlSession [$session]"}
         holder.released()
       } else {
-        if (LOGGER.isDebugEnabled) {
-          LOGGER.debug("Closing non transactional SqlSession [$session]")
-        }
+        LOGGER.debug {"Closing non transactional SqlSession [$session]"}
         session.close()
       }
     }
 
     /**
      * Returns if the `SqlSession` passed as an argument is being managed by Spring
-
+     *
      * @param session a MyBatis SqlSession to check
-     * *
      * @param sessionFactory the SqlSessionFactory which the SqlSession was built with
-     * *
      * @return true if session is transactional, otherwise false
      */
     @JvmStatic
@@ -218,9 +203,7 @@ class SqlSessionUtils {
        */
       override fun suspend() {
         if (this.holderActive) {
-          if (LOGGER.isDebugEnabled) {
-            LOGGER.debug("Transaction synchronization suspending SqlSession [" + this.holder.sqlSession + "]")
-          }
+          LOGGER.debug {"Transaction synchronization suspending SqlSession [${this.holder.sqlSession}]"}
           TransactionSynchronizationManager.unbindResource(this.sessionFactory)
         }
       }
@@ -230,9 +213,7 @@ class SqlSessionUtils {
        */
       override fun resume() {
         if (this.holderActive) {
-          if (LOGGER.isDebugEnabled) {
-            LOGGER.debug("Transaction synchronization resuming SqlSession [" + this.holder.sqlSession + "]")
-          }
+          LOGGER.debug {"Transaction synchronization resuming SqlSession [${this.holder.sqlSession}]"}
           TransactionSynchronizationManager.bindResource(this.sessionFactory, this.holder)
         }
       }
@@ -249,9 +230,7 @@ class SqlSessionUtils {
         // TODO This updates 2nd level caches but the tx may be rolledback later on!
         if (TransactionSynchronizationManager.isActualTransactionActive()) {
           try {
-            if (LOGGER.isDebugEnabled) {
-              LOGGER.debug("Transaction synchronization committing SqlSession [" + this.holder.sqlSession + "]")
-            }
+            LOGGER.debug {"Transaction synchronization committing SqlSession [${this.holder.sqlSession}]"}
             this.holder.sqlSession.commit()
           } catch (p: PersistenceException) {
             if (this.holder.persistenceExceptionTranslator != null) {
@@ -262,7 +241,6 @@ class SqlSessionUtils {
             }
             throw p
           }
-
         }
       }
 
@@ -272,15 +250,11 @@ class SqlSessionUtils {
       override fun beforeCompletion() {
         // Issue #18 Close SqlSession and deregister it now
         // because afterCompletion may be called from a different thread
-        if (!this.holder.isOpen()) {
-          if (LOGGER.isDebugEnabled) {
-            LOGGER.debug("Transaction synchronization deregistering SqlSession [" + this.holder.sqlSession + "]")
-          }
+        if (!this.holder.isOpen) {
+          LOGGER.debug {"Transaction synchronization deregistering SqlSession [${this.holder.sqlSession}]"}
           TransactionSynchronizationManager.unbindResource(sessionFactory)
           this.holderActive = false
-          if (LOGGER.isDebugEnabled) {
-            LOGGER.debug("Transaction synchronization closing SqlSession [" + this.holder.sqlSession + "]")
-          }
+          LOGGER.debug {"Transaction synchronization closing SqlSession [${this.holder.sqlSession}]"}
           this.holder.sqlSession.close()
         }
       }
@@ -292,14 +266,10 @@ class SqlSessionUtils {
         if (this.holderActive) {
           // afterCompletion may have been called from a different thread
           // so avoid failing if there is nothing in this one
-          if (LOGGER.isDebugEnabled) {
-            LOGGER.debug("Transaction synchronization deregistering SqlSession [" + this.holder.sqlSession + "]")
-          }
+          LOGGER.debug {"Transaction synchronization deregistering SqlSession [${this.holder.sqlSession}]"}
           TransactionSynchronizationManager.unbindResourceIfPossible(sessionFactory)
           this.holderActive = false
-          if (LOGGER.isDebugEnabled) {
-            LOGGER.debug("Transaction synchronization closing SqlSession [" + this.holder.sqlSession + "]")
-          }
+          LOGGER.debug {"Transaction synchronization closing SqlSession [${this.holder.sqlSession}]"}
           this.holder.sqlSession.close()
         }
         this.holder.reset()
@@ -308,7 +278,3 @@ class SqlSessionUtils {
 
   }
 }
-/**
- * This class can't be instantiated, exposes static utility methods only.
- */
-// do nothing

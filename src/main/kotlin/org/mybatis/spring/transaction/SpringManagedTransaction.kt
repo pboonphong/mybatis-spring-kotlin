@@ -22,8 +22,8 @@ import java.sql.SQLException
 
 import javax.sql.DataSource
 
-import org.apache.ibatis.logging.Log
-import org.apache.ibatis.logging.LogFactory
+import org.mybatis.logging.Logger
+import org.mybatis.logging.LoggerFactory
 import org.apache.ibatis.transaction.Transaction
 import org.springframework.jdbc.datasource.ConnectionHolder
 import org.springframework.jdbc.datasource.DataSourceUtils
@@ -82,14 +82,8 @@ class SpringManagedTransaction(private val dataSource: DataSource) : Transaction
     this.autoCommit = this.connection!!.autoCommit
     this.isConnectionTransactional = DataSourceUtils.isConnectionTransactional(this.connection, this.dataSource)
 
-    if (LOGGER.isDebugEnabled) {
-      LOGGER.debug(
-          "JDBC Connection ["
-              + this.connection
-              + "] will"
-              + (if (this.isConnectionTransactional) " " else " not ")
-              + "be managed by Spring")
-    }
+    LOGGER.debug {
+        "JDBC Connection [$connection] will" + (if (this.isConnectionTransactional) " " else " not ") + "be managed by Spring"}
   }
 
   /**
@@ -98,9 +92,7 @@ class SpringManagedTransaction(private val dataSource: DataSource) : Transaction
   @Throws(SQLException::class)
   override fun commit() {
     if (this.connection != null && !this.isConnectionTransactional && !this.autoCommit) {
-      if (LOGGER.isDebugEnabled) {
-        LOGGER.debug("Committing JDBC Connection [" + this.connection + "]")
-      }
+      LOGGER.debug {"Committing JDBC Connection [${this.connection}]"}
       this.connection!!.commit()
     }
   }
@@ -111,9 +103,7 @@ class SpringManagedTransaction(private val dataSource: DataSource) : Transaction
   @Throws(SQLException::class)
   override fun rollback() {
     if (this.connection != null && !this.isConnectionTransactional && !this.autoCommit) {
-      if (LOGGER.isDebugEnabled) {
-        LOGGER.debug("Rolling back JDBC Connection [" + this.connection + "]")
-      }
+      LOGGER.debug {"Rolling back JDBC Connection [$connection]"}
       this.connection!!.rollback()
     }
   }
@@ -140,7 +130,7 @@ class SpringManagedTransaction(private val dataSource: DataSource) : Transaction
 
   companion object {
 
-    private val LOGGER = LogFactory.getLog(SpringManagedTransaction::class.java)
+    private val LOGGER = LoggerFactory.getLogger(SpringManagedTransaction::class.java)
   }
 
 }

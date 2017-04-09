@@ -27,17 +27,11 @@ import org.mybatis.spring.SqlSessionTemplate
 import org.springframework.batch.item.database.AbstractPagingItemReader
 
 /**
- * `org.springframework.batch.item.ItemReader` for reading database
- * records using MyBatis in a paging fashion.
- *
- *
+ * `org.springframework.batch.item.ItemReader` for reading database  records using MyBatis in a paging fashion.
  * Provided to facilitate the migration from Spring-Batch iBATIS 2 page item readers to MyBatis 3.
-
+ *
  * @author Eduardo Macarron
- * *
- * *
  * @since 1.1.0
- * *
  * @version $Id$
  */
 class MyBatisPagingItemReader<T> : AbstractPagingItemReader<T>() {
@@ -57,7 +51,7 @@ class MyBatisPagingItemReader<T> : AbstractPagingItemReader<T>() {
   /**
    * Public setter for [SqlSessionFactory] for injection purposes.
    *
-   * @param SqlSessionFactory sqlSessionFactory
+   * @param sqlSessionFactory SqlSessionFactory
    */
   fun setSqlSessionFactory(sqlSessionFactory: SqlSessionFactory) {
     this.sqlSessionFactory = sqlSessionFactory
@@ -76,8 +70,7 @@ class MyBatisPagingItemReader<T> : AbstractPagingItemReader<T>() {
   /**
    * The parameter values to be used for the query execution.
    *
-   * @param parameterValues the values keyed by the parameter named used in
-   * * the query string.
+   * @param parameterValues the values keyed by the parameter named used in the query string.
    */
   fun setParameterValues(parameterValues: Map<String, Any>) {
     this.parameterValues = parameterValues
@@ -90,9 +83,9 @@ class MyBatisPagingItemReader<T> : AbstractPagingItemReader<T>() {
   @Throws(Exception::class)
   override fun afterPropertiesSet() {
     super.afterPropertiesSet()
-    notNull(sqlSessionFactory)
+    notNull(sqlSessionFactory, "sqlSessionFactory must not be null!")
     sqlSessionTemplate = SqlSessionTemplate(sqlSessionFactory!!, ExecutorType.BATCH)
-    notNull(queryId)
+    notNull(queryId, "queryId must not be null!")
   }
 
   override fun doReadPage() {

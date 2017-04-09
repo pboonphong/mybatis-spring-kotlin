@@ -76,7 +76,7 @@ class MyBatisCursorItemReader<T> : AbstractItemCountingItemStreamItemReader<T>()
 
   /**
    * Check mandatory properties.
-
+   *
    * @see org.springframework.beans.factory.InitializingBean.afterPropertiesSet
    */
   @Throws(Exception::class)
@@ -87,7 +87,7 @@ class MyBatisCursorItemReader<T> : AbstractItemCountingItemStreamItemReader<T>()
 
   /**
    * Public setter for [SqlSessionFactory] for injection purposes.
-
+   *
    * @param SqlSessionFactory sqlSessionFactory
    */
   fun setSqlSessionFactory(sqlSessionFactory: SqlSessionFactory) {
@@ -97,7 +97,7 @@ class MyBatisCursorItemReader<T> : AbstractItemCountingItemStreamItemReader<T>()
   /**
    * Public setter for the statement id identifying the statement in the SqlMap
    * configuration file.
-
+   *
    * @param queryId the id for the statement
    */
   fun setQueryId(queryId: String) {
@@ -107,8 +107,7 @@ class MyBatisCursorItemReader<T> : AbstractItemCountingItemStreamItemReader<T>()
   /**
    * The parameter values to be used for the query execution.
    *
-   * @param parameterValues the values keyed by the parameter named used in
-   *                        the query string.
+   * @param parameterValues the values keyed by the parameter named used in the query string.
    */
   fun setParameterValues(parameterValues: Map<String, Any>) {
     this.parameterValues = parameterValues

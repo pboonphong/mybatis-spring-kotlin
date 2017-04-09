@@ -294,7 +294,6 @@ class SqlSessionTemplate
 
   /**
    * {@inheritDoc}
-
    */
   override fun getConfiguration(): Configuration {
     return this.sqlSessionFactory.configuration
@@ -310,7 +309,6 @@ class SqlSessionTemplate
 
   /**
    * {@inheritDoc}
-
    * @since 1.0.2
    */
   override fun flushStatements(): MutableList<BatchResult>? {

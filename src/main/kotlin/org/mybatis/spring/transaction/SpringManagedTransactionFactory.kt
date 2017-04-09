@@ -28,7 +28,6 @@ import org.apache.ibatis.transaction.TransactionFactory
  * Creates a `SpringManagedTransaction`.
  *
  * @author Hunter Presnall
- *
  * @version $Id$
  */
 class SpringManagedTransactionFactory : TransactionFactory {

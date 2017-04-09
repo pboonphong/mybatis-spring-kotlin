@@ -29,66 +29,41 @@ import org.springframework.beans.factory.FactoryBean
  *
  *
  * Sample configuration:
-
- *
  * `&lt;bean id=&quot;baseMapper&quot; class=&quot;org.mybatis.spring.mapper.MapperFactoryBean&quot; abstract=&quot;true&quot; lazy-init=&quot;true&quot;&gt;
  * &lt;property name=&quot;sqlSessionFactory&quot; ref=&quot;sqlSessionFactory&quot; /&gt;
  * &lt;/bean&gt;
-
+ *
  * &lt;bean id=&quot;oneMapper&quot; parent=&quot;baseMapper&quot;&gt;
  * &lt;property name=&quot;mapperInterface&quot; value=&quot;my.package.MyMapperInterface&quot; /&gt;
  * &lt;/bean&gt;
-
+ *
  * &lt;bean id=&quot;anotherMapper&quot; parent=&quot;baseMapper&quot;&gt;
  * &lt;property name=&quot;mapperInterface&quot; value=&quot;my.package.MyAnotherMapperInterface&quot; /&gt;
- * &lt;/bean&gt;
-` *
- *
- *
+ * &lt;/bean&gt;`
  *
  * Note that this factory can only inject *interfaces*, not concrete classes.
-
+ *
  * @author Eduardo Macarron
- * *
- * *
  * @see SqlSessionTemplate
-
  * @version $Id$
  */
 open class MapperFactoryBean<T : Any> : SqlSessionDaoSupport, FactoryBean<T> {
 
   /**
-   * Return the mapper interface of the MyBatis mapper
-
-   * @return class of the interface
-   */
-  //------------- mutators --------------
-
-  /**
-   * Sets the mapper interface of the MyBatis mapper
-   *
-   * @param mapperInterface class of the interface
+   * Returns the mapper interface of the MyBatis mapper
    */
   var mapperInterface: Class<T>? = null
 
   /**
    * Return the flag for addition into MyBatis config.
    *
-   * @return true if the mapper will be added to MyBatis in the case it is not already
-   * * registered.
-   */
-  /**
    * If addToConfig is false the mapper will not be added to MyBatis. This means
    * it must have been included in mybatis-config.xml.
-   *
    *
    * If it is true, the mapper will be added to MyBatis in the case it is not already
    * registered.
    *
-   *
-   * By default addToCofig is true.
-
-   * @param addToConfig
+   * By default addToConfig is true.
    */
   var isAddToConfig = true
 

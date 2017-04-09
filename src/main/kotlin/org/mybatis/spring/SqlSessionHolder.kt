@@ -25,24 +25,18 @@ import org.springframework.transaction.support.ResourceHolderSupport
  * The `SqlSessionFactory` that created that `SqlSession` is used as a key.
  * `ExecutorType` is also kept to be able to check if the user is trying to change it
  * during a TX (that is not allowed) and throw a Exception in that case.
-
+ *
  * @author Hunter Presnall
- * *
  * @author Eduardo Macarron
- * *
- * *
  * @version $Id$
  */
 class SqlSessionHolder
 /**
  * Creates a new holder instance.
-
+ *
  * @param sqlSession the `SqlSession` has to be hold.
- * *
  * @param executorType the `ExecutorType` has to be hold.
  */
 (val sqlSession: SqlSession,
  val executorType: ExecutorType,
- val persistenceExceptionTranslator: PersistenceExceptionTranslator?) : ResourceHolderSupport() {
-
-}
+ val persistenceExceptionTranslator: PersistenceExceptionTranslator?) : ResourceHolderSupport()

@@ -35,7 +35,6 @@ import org.springframework.transaction.TransactionException
  * first exception is translated.
  *
  * @author Eduardo Macarron
- *
  * @version $Id$
  */
 class MyBatisExceptionTranslator
@@ -43,7 +42,6 @@ class MyBatisExceptionTranslator
  * Creates a new `DataAccessExceptionTranslator` instance.
  *
  * @param dataSource DataSource to use to find metadata and establish which error codes are usable.
- *
  * @param exceptionTranslatorLazyInit if true, the translator instantiates internal stuff only the first time will
  * *        have the need to translate exceptions.
  */

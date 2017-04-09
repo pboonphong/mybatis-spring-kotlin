@@ -30,8 +30,8 @@ import org.springframework.dao.UncategorizedDataAccessException
  * @version $Id$
  */
 class MyBatisSystemException(cause: Throwable) : UncategorizedDataAccessException(null, cause) {
-  companion object {
 
+  companion object {
     private val serialVersionUID = -5284728621670758939L
   }
 

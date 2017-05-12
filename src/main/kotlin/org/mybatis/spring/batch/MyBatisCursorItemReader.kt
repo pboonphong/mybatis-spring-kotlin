@@ -46,34 +46,6 @@ class MyBatisCursorItemReader<T> : AbstractItemCountingItemStreamItemReader<T>()
     setName(getShortName(MyBatisCursorItemReader::class.java))
   }
 
-  @Throws(Exception::class)
-  override fun doRead(): T? {
-    var next: T? = null
-    if (cursorIterator!!.hasNext()) {
-      next = cursorIterator!!.next()
-    }
-    return next
-  }
-
-  @Throws(Exception::class)
-  override fun doOpen() {
-    val parameters = HashMap<String, Any>()
-    if (parameterValues != null) {
-      parameters.putAll(parameterValues!!)
-    }
-
-    sqlSession = sqlSessionFactory!!.openSession(ExecutorType.SIMPLE)
-    cursor = sqlSession!!.selectCursor<T>(queryId, parameters)
-    cursorIterator = cursor!!.iterator()
-  }
-
-  @Throws(Exception::class)
-  override fun doClose() {
-    cursor!!.close()
-    sqlSession!!.close()
-    cursorIterator = null
-  }
-
   /**
    * Check mandatory properties.
    *
@@ -81,8 +53,8 @@ class MyBatisCursorItemReader<T> : AbstractItemCountingItemStreamItemReader<T>()
    */
   @Throws(Exception::class)
   override fun afterPropertiesSet() {
-    notNull(sqlSessionFactory)
-    notNull(queryId)
+    notNull(sqlSessionFactory, "sqlSessionFactory must not be null!")
+    notNull(queryId, "queryId must not be null!")
   }
 
   /**
@@ -112,4 +84,33 @@ class MyBatisCursorItemReader<T> : AbstractItemCountingItemStreamItemReader<T>()
   fun setParameterValues(parameterValues: Map<String, Any>) {
     this.parameterValues = parameterValues
   }
+
+  @Throws(Exception::class)
+  override fun doRead(): T? {
+    var next: T? = null
+    if (cursorIterator!!.hasNext()) {
+      next = cursorIterator!!.next()
+    }
+    return next
+  }
+
+  @Throws(Exception::class)
+  override fun doOpen() {
+    val parameters = HashMap<String, Any>()
+    if (parameterValues != null) {
+      parameters.putAll(parameterValues!!)
+    }
+
+    sqlSession = sqlSessionFactory!!.openSession(ExecutorType.SIMPLE)
+    cursor = sqlSession!!.selectCursor<T>(queryId, parameters)
+    cursorIterator = cursor!!.iterator()
+  }
+
+  @Throws(Exception::class)
+  override fun doClose() {
+    cursor!!.close()
+    sqlSession!!.close()
+    cursorIterator = null
+  }
+
 }

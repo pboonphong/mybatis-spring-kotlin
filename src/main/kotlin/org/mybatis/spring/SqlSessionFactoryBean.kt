@@ -390,7 +390,7 @@ class SqlSessionFactoryBean : FactoryBean<SqlSessionFactory>, InitializingBean, 
         configuration = xmlConfigBuilder.configuration
       }
       else -> {
-        LOGGER.debug {"Property `configuration` or 'configLocation' not specified, using default MyBatis Configuration"}
+        logger.debug {"Property `configuration` or 'configLocation' not specified, using default MyBatis Configuration"}
         configuration = Configuration()
         if (this.configurationProperties != null) {
           configuration.variables = this.configurationProperties
@@ -416,21 +416,21 @@ class SqlSessionFactoryBean : FactoryBean<SqlSessionFactory>, InitializingBean, 
       for (packageToScan in typeAliasPackageArray) {
         configuration.typeAliasRegistry.registerAliases(packageToScan,
             if (typeAliasesSuperType == null) Any::class.java else typeAliasesSuperType)
-        LOGGER.debug {"Scanned package: '$packageToScan' for aliases"}
+        logger.debug {"Scanned package: '$packageToScan' for aliases"}
       }
     }
 
     if (!isEmpty(this.typeAliases)) {
       for (typeAlias in this.typeAliases!!) {
         configuration.typeAliasRegistry.registerAlias(typeAlias)
-        LOGGER.debug {"Registered type alias: '$typeAlias'"}
+        logger.debug {"Registered type alias: '$typeAlias'"}
       }
     }
 
     if (!isEmpty(this.plugins)) {
       for (plugin in this.plugins!!) {
         configuration.addInterceptor(plugin)
-        LOGGER.debug {"Registered plugin: '$plugin'"}
+        logger.debug {"Registered plugin: '$plugin'"}
       }
     }
 
@@ -439,14 +439,14 @@ class SqlSessionFactoryBean : FactoryBean<SqlSessionFactory>, InitializingBean, 
           ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS)
       for (packageToScan in typeHandlersPackageArray) {
         configuration.typeHandlerRegistry.register(packageToScan)
-        LOGGER.debug {"Scanned package: '$packageToScan' for type handlers"}
+        logger.debug {"Scanned package: '$packageToScan' for type handlers"}
       }
     }
 
     if (!isEmpty(this.typeHandlers)) {
       for (typeHandler in this.typeHandlers!!) {
         configuration.typeHandlerRegistry.register(typeHandler)
-        LOGGER.debug {"Registered type handler: '$typeHandler'"}
+        logger.debug {"Registered type handler: '$typeHandler'"}
       }
     }
 
@@ -466,8 +466,7 @@ class SqlSessionFactoryBean : FactoryBean<SqlSessionFactory>, InitializingBean, 
     if (xmlConfigBuilder != null) {
       try {
         xmlConfigBuilder.parse()
-
-        LOGGER.debug {"Parsed configuration file: '${this.configLocation}'"}
+        logger.debug {"Parsed configuration file: '${this.configLocation}'"}
       } catch (ex: Exception) {
         throw NestedIOException("Failed to parse config resource: ${this.configLocation!!}", ex)
       } finally {
@@ -493,11 +492,11 @@ class SqlSessionFactoryBean : FactoryBean<SqlSessionFactory>, InitializingBean, 
           } finally {
             ErrorContext.instance().reset()
           }
-          LOGGER.debug {"Parsed mapper file: '$mapperLocation'"}
+          logger.debug {"Parsed mapper file: '$mapperLocation'"}
         }
       }
     } else {
-      LOGGER.debug {"Property 'mapperLocations' was not specified or no matching resources found"}
+      logger.debug {"Property 'mapperLocations' was not specified or no matching resources found"}
     }
 
     return this.sqlSessionFactoryBuilder.build(configuration)
@@ -540,7 +539,7 @@ class SqlSessionFactoryBean : FactoryBean<SqlSessionFactory>, InitializingBean, 
   }
 
   companion object {
-    private val LOGGER = LoggerFactory.getLogger(SqlSessionFactoryBean::class.java)
+    private val logger = LoggerFactory.getLogger(SqlSessionFactoryBean::class.java)
   }
 
 }

@@ -99,7 +99,7 @@ class MyBatisBatchItemWriter<T> : ItemWriter<T>, InitializingBean {
 
     if (!items.isEmpty()) {
 
-      LOGGER.debug {"Executing batch with ${items.size} items."}
+      logger.debug {"Executing batch with ${items.size} items."}
 
       for (item in items) {
         sqlSessionTemplate!!.update(statementId!!, item!!)
@@ -126,7 +126,7 @@ class MyBatisBatchItemWriter<T> : ItemWriter<T>, InitializingBean {
   }
 
   companion object {
-    private val LOGGER = LoggerFactory.getLogger(MyBatisBatchItemWriter::class.java)
+    private val logger = LoggerFactory.getLogger(MyBatisBatchItemWriter::class.java)
   }
 
 }

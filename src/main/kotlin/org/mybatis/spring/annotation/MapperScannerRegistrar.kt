@@ -50,15 +50,19 @@ class MapperScannerRegistrar : ImportBeanDefinitionRegistrar, ResourceLoaderAwar
   /**
    * {@inheritDoc}
    */
+  override fun setResourceLoader(resourceLoader: ResourceLoader) {
+    this.resourceLoader = resourceLoader
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   override fun registerBeanDefinitions(importingClassMetadata: AnnotationMetadata, registry: BeanDefinitionRegistry) {
 
     val annoAttrs = AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(MapperScan::class.java.name))
     val scanner = ClassPathMapperScanner(registry)
 
-    // this check is needed in Spring 3.1
-    if (resourceLoader != null) {
-      scanner.resourceLoader = resourceLoader!!
-    }
+    scanner.resourceLoader = resourceLoader
 
     val annotationClass = annoAttrs.getClass<Annotation>("annotationClass")
     if (Annotation::class.java != annotationClass) {
@@ -89,13 +93,6 @@ class MapperScannerRegistrar : ImportBeanDefinitionRegistrar, ResourceLoaderAwar
     annoAttrs.getClassArray("basePackageClasses").mapTo(basePackages) { ClassUtils.getPackageName(it) }
     scanner.registerFilters()
     scanner.doScan(*StringUtils.toStringArray(basePackages))
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  override fun setResourceLoader(resourceLoader: ResourceLoader) {
-    this.resourceLoader = resourceLoader
   }
 
 }

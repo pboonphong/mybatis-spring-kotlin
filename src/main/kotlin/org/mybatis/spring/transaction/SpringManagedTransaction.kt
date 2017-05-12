@@ -82,7 +82,7 @@ class SpringManagedTransaction(private val dataSource: DataSource) : Transaction
     this.autoCommit = this.connection!!.autoCommit
     this.isConnectionTransactional = DataSourceUtils.isConnectionTransactional(this.connection, this.dataSource)
 
-    LOGGER.debug {
+    logger.debug {
         "JDBC Connection [$connection] will" + (if (this.isConnectionTransactional) " " else " not ") + "be managed by Spring"}
   }
 
@@ -92,7 +92,7 @@ class SpringManagedTransaction(private val dataSource: DataSource) : Transaction
   @Throws(SQLException::class)
   override fun commit() {
     if (this.connection != null && !this.isConnectionTransactional && !this.autoCommit) {
-      LOGGER.debug {"Committing JDBC Connection [${this.connection}]"}
+      logger.debug {"Committing JDBC Connection [${this.connection}]"}
       this.connection!!.commit()
     }
   }
@@ -103,7 +103,7 @@ class SpringManagedTransaction(private val dataSource: DataSource) : Transaction
   @Throws(SQLException::class)
   override fun rollback() {
     if (this.connection != null && !this.isConnectionTransactional && !this.autoCommit) {
-      LOGGER.debug {"Rolling back JDBC Connection [$connection]"}
+      logger.debug {"Rolling back JDBC Connection [$connection]"}
       this.connection!!.rollback()
     }
   }
@@ -130,7 +130,7 @@ class SpringManagedTransaction(private val dataSource: DataSource) : Transaction
 
   companion object {
 
-    private val LOGGER = LoggerFactory.getLogger(SpringManagedTransaction::class.java)
+    private val logger = LoggerFactory.getLogger(SpringManagedTransaction::class.java)
   }
 
 }

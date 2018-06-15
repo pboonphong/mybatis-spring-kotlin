@@ -1,17 +1,17 @@
-/**
- *    Copyright 2010-2017 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+/*
+     Copyright 2010-2017 the original author or authors.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
  */
 package org.mybatis.spring;
 
@@ -159,7 +159,7 @@ public final class MyBatisSpringTest extends AbstractMyBatisSpringTest {
   // Spring TX, non-Spring TransactionFactory, Spring managed DataSource
   // this should not work since the DS will be out of sync with MyBatis
   @Test(expected = TransientDataAccessResourceException.class)
-  public void testNonSpringTxFactoryWithTx() throws Exception {
+  public void testNonSpringTxFactoryWithTx() {
     Environment original = sqlSessionFactory.getConfiguration().getEnvironment();
     Environment nonSpring = new Environment("non-spring", new JdbcTransactionFactory(), dataSource);
     sqlSessionFactory.getConfiguration().setEnvironment(nonSpring);
@@ -174,7 +174,9 @@ public final class MyBatisSpringTest extends AbstractMyBatisSpringTest {
       fail("should not be able to get an SqlSession using non-Spring tx manager when there is an active Spring tx");
     } finally {
       // rollback required to close connection
-      txManager.rollback(status);
+      if (status != null) {
+        txManager.rollback(status);
+      }
 
       sqlSessionFactory.getConfiguration().setEnvironment(original);
     }
@@ -192,7 +194,7 @@ public final class MyBatisSpringTest extends AbstractMyBatisSpringTest {
     Environment nonSpring = new Environment("non-spring", new JdbcTransactionFactory(), mockDataSource);
     sqlSessionFactory.getConfiguration().setEnvironment(nonSpring);
 
-    TransactionStatus status = null;
+    TransactionStatus status;
 
     try {
       status = txManager.getTransaction(new DefaultTransactionDefinition());
@@ -221,7 +223,7 @@ public final class MyBatisSpringTest extends AbstractMyBatisSpringTest {
   }
 
   @Test(expected = TransientDataAccessResourceException.class)
-  public void testChangeExecutorTypeInTx() throws Exception {
+  public void testChangeExecutorTypeInTx() {
     TransactionStatus status = null;
 
     try {
@@ -236,12 +238,14 @@ public final class MyBatisSpringTest extends AbstractMyBatisSpringTest {
       SqlSessionUtils.closeSqlSession(session, sqlSessionFactory);
 
       // rollback required to close connection
-      txManager.rollback(status);
+      if (status != null) {
+        txManager.rollback(status);
+      }
     }
   }
 
   @Test
-  public void testChangeExecutorTypeInTxRequiresNew() throws Exception {
+  public void testChangeExecutorTypeInTxRequiresNew() {
 
     try {
       txManager.setDataSource(dataSource);
@@ -421,7 +425,7 @@ public final class MyBatisSpringTest extends AbstractMyBatisSpringTest {
   }
 
   @Test
-  public void testWithInterleavedTx() throws Exception {
+  public void testWithInterleavedTx() {
     // this session will use one Connection
     session = SqlSessionUtils.getSqlSession(sqlSessionFactory);
     session.getMapper(TestMapper.class).findTest();
@@ -457,7 +461,7 @@ public final class MyBatisSpringTest extends AbstractMyBatisSpringTest {
   }
 
   @Test
-  public void testSuspendAndResume() throws Exception {
+  public void testSuspendAndResume() {
 
     try {
       txManager.setDataSource(dataSource);
@@ -472,7 +476,7 @@ public final class MyBatisSpringTest extends AbstractMyBatisSpringTest {
 
       SqlSession session2 = SqlSessionUtils.getSqlSession(sqlSessionFactory);
 
-      assertNotSame("getSqlSession() should not return suspended SqlSession", session, session2);
+      assertNotSame("getSqlSessionTemplate() should not return suspended SqlSession", session, session2);
 
       SqlSessionUtils.closeSqlSession(session2, sqlSessionFactory);
       txManager.commit(status2);

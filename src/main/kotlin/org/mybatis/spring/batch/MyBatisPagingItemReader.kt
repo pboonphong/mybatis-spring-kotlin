@@ -93,9 +93,9 @@ class MyBatisPagingItemReader<T> : AbstractPagingItemReader<T>() {
     if (parameterValues != null) {
       parameters.putAll(parameterValues!!)
     }
-    parameters.put("_page", page)
-    parameters.put("_pagesize", pageSize)
-    parameters.put("_skiprows", page * pageSize)
+    parameters["_page"] = page
+    parameters["_pagesize"] = pageSize
+    parameters["_skiprows"] = page * pageSize
     if (results == null) {
       results = CopyOnWriteArrayList<T>()
     } else {

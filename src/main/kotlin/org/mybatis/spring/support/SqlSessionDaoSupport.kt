@@ -17,7 +17,6 @@ package org.mybatis.spring.support
 
 import org.springframework.util.Assert.notNull
 
-import org.apache.ibatis.session.SqlSession
 import org.apache.ibatis.session.SqlSessionFactory
 import org.mybatis.spring.SqlSessionTemplate
 import org.springframework.dao.support.DaoSupport
@@ -26,54 +25,51 @@ import org.springframework.dao.support.DaoSupport
  * Convenient super class for MyBatis SqlSession data access objects.
  * It gives you access to the template which can then be used to execute SQL methods.
  *
- *
  * This class needs a SqlSessionTemplate or a SqlSessionFactory.
  * If both are set the SqlSessionFactory will be ignored.
  *
- *
  * {code Autowired} was removed from setSqlSessionTemplate and setSqlSessionFactory
  * in version 1.2.0.
-
+ *
  * @author Putthiphong Boonphong
- * *
- * *
  * @see .setSqlSessionFactory
-
  * @see .setSqlSessionTemplate
-
  * @see SqlSessionTemplate
-
  * @version $Id$
  */
 abstract class SqlSessionDaoSupport : DaoSupport() {
+
+  private var externalSqlSession: Boolean = false
 
   /**
    * Users should use this method to get a SqlSession to call its statement methods
    * This is SqlSession is managed by spring. Users should not commit/rollback/close it
    * because it will be automatically done.
-
+   *
    * @return Spring managed thread safe SqlSession
    */
-  var sqlSession: SqlSession? = null
-
-  private var externalSqlSession: Boolean = false
-
-  fun setSqlSessionFactory(sqlSessionFactory: SqlSessionFactory) {
-    if (!this.externalSqlSession) {
-      this.sqlSession = SqlSessionTemplate(sqlSessionFactory)
-    }
-  }
-
-  fun setSqlSessionTemplate(sqlSessionTemplate: SqlSessionTemplate) {
-    this.sqlSession = sqlSessionTemplate
-    this.externalSqlSession = true
-  }
+  private var sqlSessionTemplate: SqlSessionTemplate? = null
 
   /**
    * {@inheritDoc}
    */
   override fun checkDaoConfig() {
-    notNull(this.sqlSession, "Property 'sqlSessionFactory' or 'sqlSessionTemplate' are required")
+      notNull(this.sqlSessionTemplate, "Property 'sqlSessionFactory' or 'sqlSessionTemplate' are required")
+  }
+
+  fun setSqlSessionFactory(sqlSessionFactory: SqlSessionFactory) {
+    if (!this.externalSqlSession) {
+      this.sqlSessionTemplate = SqlSessionTemplate(sqlSessionFactory)
+    }
+  }
+
+  fun setSqlSessionTemplate(sqlSessionTemplate: SqlSessionTemplate) {
+    this.sqlSessionTemplate = sqlSessionTemplate
+    this.externalSqlSession = true
+  }
+
+  fun getSqlSessionTemplate(): SqlSessionTemplate? {
+    return this.sqlSessionTemplate
   }
 
 }

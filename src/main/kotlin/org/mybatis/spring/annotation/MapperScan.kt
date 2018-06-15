@@ -65,36 +65,36 @@ import kotlin.reflect.KClass
 @Import(MapperScannerRegistrar::class)
 annotation class MapperScan(
 
-    /**
+  /**
      * Alias for the [.basePackages] attribute. Allows for more concise
      * annotation declarations e.g.:
      * `@EnableMyBatisMapperScanner(&quot;org.my.pkg&quot;)` instead of `&quot;org.my.pkg&quot;`)}.
      */
-    vararg val value: String = arrayOf(),
+    vararg val value: String = [],
 
-    /**
+  /**
      * Base packages to scan for MyBatis interfaces. Note that only interfaces
      * with at least one method will be registered; concrete classes will be
      * ignored.
      */
-    val basePackages: Array<String> = arrayOf(),
+    val basePackages: Array<String> = [],
 
-    /**
+  /**
      * Type-safe alternative to [.basePackages] for specifying the packages
      * to scan for annotated components. The package of each class specified will be scanned.
      *
      * Consider creating a special no-op marker class or interface in each package
      * that serves no purpose other than being referenced by this attribute.
      */
-    val basePackageClasses: Array<KClass<*>> = arrayOf(),
+    val basePackageClasses: Array<KClass<*>> = [],
 
-    /**
+  /**
      * The [BeanNameGenerator] class to be used for naming detected components
      * within the Spring container.
      */
     val nameGenerator: KClass<out BeanNameGenerator> = BeanNameGenerator::class,
 
-    /**
+  /**
      * This property specifies the annotation that the scanner will search for.
      *
      *
@@ -106,7 +106,7 @@ annotation class MapperScan(
      */
 
     val annotationClass: KClass<out Annotation> = Annotation::class,
-    /**
+  /**
      * This property specifies the parent that the scanner will search for.
      *
      * The scanner will register all interfaces in the base package that also have
@@ -116,21 +116,21 @@ annotation class MapperScan(
      */
     val markerInterface: KClass<*> = Class::class,
 
-    /**
+  /**
      * Specifies which `SqlSessionTemplate` to use in the case that there is
      * more than one in the spring context. Usually this is only needed when you
      * have more than one datasource.
      */
     val sqlSessionTemplateRef: String = "",
 
-    /**
+  /**
      * Specifies which `SqlSessionFactory` to use in the case that there is
      * more than one in the spring context. Usually this is only needed when you
      * have more than one datasource.
      */
     val sqlSessionFactoryRef: String = "",
 
-    /**
+  /**
      * Specifies a custom MapperFactoryBean to return a mybatis proxy as spring bean.
      */
 // FIXME: Incompatible types when pass Java class to Kotlin annotation

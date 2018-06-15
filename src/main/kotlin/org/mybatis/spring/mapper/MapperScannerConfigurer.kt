@@ -15,15 +15,11 @@
  */
 package org.mybatis.spring.mapper
 
-import org.springframework.util.Assert.notNull
-
 import org.apache.ibatis.session.SqlSessionFactory
 import org.mybatis.spring.SqlSessionTemplate
-import org.springframework.beans.PropertyValue
 import org.springframework.beans.PropertyValues
 import org.springframework.beans.factory.BeanNameAware
 import org.springframework.beans.factory.InitializingBean
-import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.beans.factory.config.PropertyResourceConfigurer
 import org.springframework.beans.factory.config.TypedStringValue
@@ -35,6 +31,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.support.GenericApplicationContext
+import org.springframework.util.Assert.notNull
 import org.springframework.util.StringUtils
 
 /**
@@ -146,7 +143,7 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
    * Same as `MapperFactoryBean#setAddToConfig(boolean)`.
    *
    * @param addToConfig
-   * @see MapperFactoryBean.setAddToConfig
+   * @see MapperFactoryBean.addToConfig
    */
   fun setAddToConfig(addToConfig: Boolean) {
     this.addToConfig = addToConfig
@@ -290,7 +287,7 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
     scanner.setSqlSessionTemplate(this.sqlSessionTemplate)
     scanner.setSqlSessionFactoryBeanName(this.sqlSessionFactoryBeanName)
     scanner.setSqlSessionTemplateBeanName(this.sqlSessionTemplateBeanName)
-    scanner.resourceLoader = this.applicationContext
+    scanner.resourceLoader = this.applicationContext!!
     scanner.setBeanNameGenerator(this.nameGenerator)
     scanner.registerFilters()
     scanner.scan(*StringUtils.tokenizeToStringArray(this.basePackage, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS))
@@ -307,13 +304,13 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
     val prcs = applicationContext!!.getBeansOfType(PropertyResourceConfigurer::class.java)
 
     if (!prcs.isEmpty() && applicationContext is GenericApplicationContext) {
-      val mapperScannerBean = (applicationContext as GenericApplicationContext).beanFactory.getBeanDefinition(beanName)
+      val mapperScannerBean = (applicationContext as GenericApplicationContext).beanFactory.getBeanDefinition(beanName!!)
 
       // PropertyResourceConfigurer does not expose any methods to explicitly perform
       // property placeholder substitution. Instead, create a BeanFactory that just
       // contains this mapper scanner and post process the factory.
       val factory = DefaultListableBeanFactory()
-      factory.registerBeanDefinition(beanName, mapperScannerBean)
+      factory.registerBeanDefinition(beanName!!, mapperScannerBean)
 
       for (prc in prcs.values) {
         prc.postProcessBeanFactory(factory)
@@ -332,11 +329,11 @@ class MapperScannerConfigurer : BeanDefinitionRegistryPostProcessor, Initializin
 
     val value = property.value
 
-    when (value) {
-      null -> return null
-      is String -> return value.toString()
-      is TypedStringValue -> return value.value
-      else -> return null
+    return when (value) {
+      null -> null
+      is String -> value.toString()
+      is TypedStringValue -> value.value
+      else -> null
     }
   }
 

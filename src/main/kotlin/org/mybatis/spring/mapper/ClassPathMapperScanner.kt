@@ -15,7 +15,6 @@
  */
 package org.mybatis.spring.mapper
 
-import java.io.IOException
 import java.util.Arrays
 
 import org.apache.ibatis.session.SqlSessionFactory
@@ -28,11 +27,8 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition
 import org.springframework.beans.factory.support.BeanDefinitionRegistry
 import org.springframework.beans.factory.support.GenericBeanDefinition
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner
-import org.springframework.core.type.classreading.MetadataReader
-import org.springframework.core.type.classreading.MetadataReaderFactory
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.core.type.filter.AssignableTypeFilter
-import org.springframework.core.type.filter.TypeFilter
 import org.springframework.util.StringUtils
 
 /**
@@ -117,7 +113,7 @@ class ClassPathMapperScanner(registry: BeanDefinitionRegistry) : ClassPathBeanDe
 
     // override AssignableTypeFilter to ignore matches on the actual marker interface
     if (this.markerInterface != null) {
-      addIncludeFilter(object : AssignableTypeFilter(this.markerInterface) {
+      addIncludeFilter(object : AssignableTypeFilter(this.markerInterface!!) {
         override fun matchClassName(className: String?): Boolean {
           return false
         }
@@ -127,11 +123,11 @@ class ClassPathMapperScanner(registry: BeanDefinitionRegistry) : ClassPathBeanDe
 
     if (acceptAllInterfaces) {
       // default include filter that accepts all classes
-      addIncludeFilter { metadataReader, metadataReaderFactory -> true }
+      addIncludeFilter { _, _ -> true }
     }
 
     // exclude package-info.java
-    addExcludeFilter { metadataReader, metadataReaderFactory ->
+    addExcludeFilter { metadataReader, _ ->
       val className = metadataReader.classMetadata.className
       className.endsWith("package-info")
     }
@@ -166,14 +162,14 @@ class ClassPathMapperScanner(registry: BeanDefinitionRegistry) : ClassPathBeanDe
 
       // the mapper interface is the original class of the bean
       // but, the actual class of the bean is MapperFactoryBean
-      definition.constructorArgumentValues.addGenericArgumentValue(definition.beanClassName) // issue #59
+      definition.constructorArgumentValues.addGenericArgumentValue(definition.beanClassName!!) // issue #59
       definition.beanClass = this.mapperFactoryBean.javaClass
 
       definition.propertyValues.add("addToConfig", this.addToConfig)
 
       var explicitFactoryUsed = false
       if (StringUtils.hasText(this.sqlSessionFactoryBeanName)) {
-        definition.propertyValues.add("sqlSessionFactory", RuntimeBeanReference(this.sqlSessionFactoryBeanName))
+        definition.propertyValues.add("sqlSessionFactory", RuntimeBeanReference(this.sqlSessionFactoryBeanName!!))
         explicitFactoryUsed = true
       } else if (this.sqlSessionFactory != null) {
         definition.propertyValues.add("sqlSessionFactory", this.sqlSessionFactory)
@@ -184,7 +180,7 @@ class ClassPathMapperScanner(registry: BeanDefinitionRegistry) : ClassPathBeanDe
         if (explicitFactoryUsed) {
           logger.warn("Cannot use both: sqlSessionTemplate and sqlSessionFactory together. sqlSessionFactory is ignored.")
         }
-        definition.propertyValues.add("sqlSessionTemplate", RuntimeBeanReference(this.sqlSessionTemplateBeanName))
+        definition.propertyValues.add("sqlSessionTemplate", RuntimeBeanReference(this.sqlSessionTemplateBeanName!!))
         explicitFactoryUsed = true
       } else if (this.sqlSessionTemplate != null) {
         if (explicitFactoryUsed) {
@@ -214,13 +210,13 @@ class ClassPathMapperScanner(registry: BeanDefinitionRegistry) : ClassPathBeanDe
    * {@inheritDoc}
    */
   override fun checkCandidate(beanName: String, beanDefinition: BeanDefinition): Boolean {
-    if (super.checkCandidate(beanName, beanDefinition)) {
-      return true
+    return if (super.checkCandidate(beanName, beanDefinition)) {
+      true
     } else {
       logger.warn("Skipping MapperFactoryBean with name '" + beanName
           + "' and '" + beanDefinition.beanClassName + "' mapperInterface"
           + ". Bean already defined with the same name!")
-      return false
+      false
     }
   }
 

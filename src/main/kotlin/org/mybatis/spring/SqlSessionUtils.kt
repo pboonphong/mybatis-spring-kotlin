@@ -102,7 +102,7 @@ class SqlSessionUtils {
      * @param sessionFactory sqlSessionFactory used for registration.
      * @param executorType executorType used for registration.
      * @param exceptionTranslator persistenceExceptionTranslater used for registration.
-     * @param session sqlSession used for registration.
+     * @param session sqlSessionTemplate used for registration.
      */
     private fun registerSessionHolder(sessionFactory: SqlSessionFactory, executorType: ExecutorType,
                                       exceptionTranslator: PersistenceExceptionTranslator?, session: SqlSession) {

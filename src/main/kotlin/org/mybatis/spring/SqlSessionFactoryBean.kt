@@ -112,18 +112,16 @@ class SqlSessionFactoryBean : FactoryBean<SqlSessionFactory>, InitializingBean, 
   //issue #19. No default provider.
   /**
    * Gets the DatabaseIdProvider
-
+   *
    * @since 1.1.0
-   * *
+   *
    * @return
    */
   /**
    * Sets the DatabaseIdProvider.
    * As of version 1.2.2 this variable is not initialized by default.
-
+   *
    * @since 1.1.0
-   * *
-   * @param databaseIdProvider
    */
   var databaseIdProvider: DatabaseIdProvider? = null
 
@@ -374,7 +372,7 @@ class SqlSessionFactoryBean : FactoryBean<SqlSessionFactory>, InitializingBean, 
    * @throws IOException if loading the config file failed
    */
   @Throws(IOException::class)
-  protected fun buildSqlSessionFactory(): SqlSessionFactory {
+  private fun buildSqlSessionFactory(): SqlSessionFactory {
     val configuration: Configuration
     var xmlConfigBuilder: XMLConfigBuilder? = null
     when {
@@ -407,7 +405,7 @@ class SqlSessionFactoryBean : FactoryBean<SqlSessionFactory>, InitializingBean, 
     }
 
     if (this.vfs != null) {
-      configuration.setVfsImpl(this.vfs)
+      configuration.vfsImpl = this.vfs
     }
 
     if (hasLength(this.typeAliasesPackage)) {

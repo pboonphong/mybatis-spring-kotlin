@@ -39,10 +39,10 @@
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
     </bean>
-    
+
     <!-- enable transaction demarcation with annotations -->
     <tx:annotation-driven />
-    
+
     <!-- simplest possible SqlSessionFactory configuration -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
@@ -57,7 +57,7 @@
          -->
         <property name="mapperLocations" value="classpath:/org/mybatis/spring/batch/dao/*.xml" />
     </bean>
-    
+
     <!-- item reader  -->
     <bean id="pagingNoNestedItemReader" class="org.mybatis.spring.batch.MyBatisPagingItemReader">
         <property name="sqlSessionFactory" ref="sqlSessionFactory" />
@@ -72,13 +72,13 @@
     </bean>
 
     <bean id="cursorNoNestedItemReader" class="org.mybatis.spring.batch.MyBatisCursorItemReader">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory" />
-        <property name="queryId" value="getEmployeeNoNestedCursor" />
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+        <constructor-arg name="queryId" value="getEmployeeNoNestedCursor" />
     </bean>
 
     <bean id="cursorNestedItemReader" class="org.mybatis.spring.batch.MyBatisCursorItemReader">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory" />
-        <property name="queryId" value="getEmployeeNestedCursor" />
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+        <constructor-arg name="queryId" value="getEmployeeNestedCursor" />
     </bean>
 
     <bean id="writer" class="org.mybatis.spring.batch.MyBatisBatchItemWriter">

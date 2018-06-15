@@ -15,7 +15,6 @@
  */
 package org.mybatis.spring.batch
 
-import org.springframework.util.Assert.notNull
 import org.springframework.util.ClassUtils.getShortName
 
 import java.util.HashMap
@@ -25,16 +24,12 @@ import org.apache.ibatis.session.ExecutorType
 import org.apache.ibatis.session.SqlSession
 import org.apache.ibatis.session.SqlSessionFactory
 import org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader
-import org.springframework.beans.factory.InitializingBean
 
 /**
  * @author Guillaume Darmont / guillaume@dropinocean.com
  */
-class MyBatisCursorItemReader<T> : AbstractItemCountingItemStreamItemReader<T>(), InitializingBean {
+class MyBatisCursorItemReader<T>(private var sqlSessionFactory: SqlSessionFactory, private var queryId: String) : AbstractItemCountingItemStreamItemReader<T>() {
 
-  private var queryId: String? = null
-
-  private var sqlSessionFactory: SqlSessionFactory? = null
   private var sqlSession: SqlSession? = null
 
   private var parameterValues: Map<String, Any>? = null
@@ -44,36 +39,6 @@ class MyBatisCursorItemReader<T> : AbstractItemCountingItemStreamItemReader<T>()
 
   init {
     setName(getShortName(MyBatisCursorItemReader::class.java))
-  }
-
-  /**
-   * Check mandatory properties.
-   *
-   * @see org.springframework.beans.factory.InitializingBean.afterPropertiesSet
-   */
-  @Throws(Exception::class)
-  override fun afterPropertiesSet() {
-    notNull(sqlSessionFactory, "sqlSessionFactory must not be null!")
-    notNull(queryId, "queryId must not be null!")
-  }
-
-  /**
-   * Public setter for [SqlSessionFactory] for injection purposes.
-   *
-   * @param SqlSessionFactory sqlSessionFactory
-   */
-  fun setSqlSessionFactory(sqlSessionFactory: SqlSessionFactory) {
-    this.sqlSessionFactory = sqlSessionFactory
-  }
-
-  /**
-   * Public setter for the statement id identifying the statement in the SqlMap
-   * configuration file.
-   *
-   * @param queryId the id for the statement
-   */
-  fun setQueryId(queryId: String) {
-    this.queryId = queryId
   }
 
   /**
@@ -101,7 +66,7 @@ class MyBatisCursorItemReader<T> : AbstractItemCountingItemStreamItemReader<T>()
       parameters.putAll(parameterValues!!)
     }
 
-    sqlSession = sqlSessionFactory!!.openSession(ExecutorType.SIMPLE)
+    sqlSession = sqlSessionFactory.openSession(ExecutorType.SIMPLE)
     cursor = sqlSession!!.selectCursor<T>(queryId, parameters)
     cursorIterator = cursor!!.iterator()
   }

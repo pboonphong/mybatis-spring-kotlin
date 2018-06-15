@@ -318,7 +318,7 @@ class SqlSessionTemplate
   /**
    * Allow gently dispose bean:
    *
-   * `&lt;bean id=&quot;sqlSession&quot; class=&quot;org.mybatis.spring.SqlSessionTemplate&quot;&gt;
+   * `&lt;bean id=&quot;sqlSessionTemplate&quot; class=&quot;org.mybatis.spring.SqlSessionTemplate&quot;&gt;
    * &lt;constructor-arg index=&quot;0&quot; ref=&quot;sqlSessionFactory&quot; /&gt;
    * &lt;/bean&gt;`
    *

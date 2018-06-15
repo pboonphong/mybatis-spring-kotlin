@@ -51,24 +51,18 @@ class MyBatisBatchItemWriter<T> : ItemWriter<T>, InitializingBean {
 
   /**
    * Public setter for the [SqlSessionTemplate].
-   *
-   * @param sqlSessionTemplate the SqlSessionTemplate
    */
   var sqlSessionTemplate: SqlSessionTemplate? = null
 
   /**
    * Public setter for the statement id identifying the statement in the SqlMap
    * configuration file.
-   *
-   * @param statementId the id for the statement
    */
   var statementId: String? = null
 
   /**
    * Public setter for the flag that determines whether an assertion is made
    * that all items cause at least one row to be updated.
-   *
-   * @param assertUpdates the flag to set. Defaults to true;
    */
   var assertUpdates = true
 

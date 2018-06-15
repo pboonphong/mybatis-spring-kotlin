@@ -18,7 +18,6 @@ package org.mybatis.spring.mapper
 import org.springframework.util.Assert.notNull
 
 import org.apache.ibatis.executor.ErrorContext
-import org.apache.ibatis.session.Configuration
 import org.mybatis.spring.SqlSessionTemplate
 import org.mybatis.spring.support.SqlSessionDaoSupport
 import org.springframework.beans.factory.FactoryBean
@@ -65,7 +64,7 @@ open class MapperFactoryBean<T : Any> : SqlSessionDaoSupport, FactoryBean<T> {
    *
    * By default addToConfig is true.
    */
-  var isAddToConfig = true
+  var addToConfig = true
 
   constructor() {
     //intentionally empty
@@ -73,6 +72,11 @@ open class MapperFactoryBean<T : Any> : SqlSessionDaoSupport, FactoryBean<T> {
 
   constructor(mapperInterface: Class<T>) {
     this.mapperInterface = mapperInterface
+  }
+
+  constructor(mapperInterface: Class<T>, addToConfig: Boolean) {
+    this.mapperInterface = mapperInterface
+    this.addToConfig = addToConfig
   }
 
   /**
@@ -83,8 +87,8 @@ open class MapperFactoryBean<T : Any> : SqlSessionDaoSupport, FactoryBean<T> {
 
     notNull(this.mapperInterface, "Property 'mapperInterface' is required")
 
-    val configuration = sqlSession!!.configuration
-    if (this.isAddToConfig && !configuration.hasMapper(this.mapperInterface)) {
+    val configuration = getSqlSessionTemplate()!!.configuration
+    if (this.addToConfig && !configuration.hasMapper(this.mapperInterface)) {
       try {
         configuration.addMapper(this.mapperInterface)
       } catch (e: Exception) {
@@ -101,7 +105,7 @@ open class MapperFactoryBean<T : Any> : SqlSessionDaoSupport, FactoryBean<T> {
    */
   @Throws(Exception::class)
   override fun getObject(): T {
-    return sqlSession!!.getMapper(this.mapperInterface)
+    return getSqlSessionTemplate()!!.getMapper(this.mapperInterface!!)
   }
 
   /**

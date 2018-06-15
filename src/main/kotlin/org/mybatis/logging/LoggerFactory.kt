@@ -4,7 +4,7 @@ import org.apache.ibatis.logging.LogFactory
 
 /**
  * LoggerFactory is a wrapper around [LogFactory] to support [Logger].
-
+ *
  * @author Putthiphong Boonphong
  */
 object LoggerFactory {

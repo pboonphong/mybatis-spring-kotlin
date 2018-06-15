@@ -62,9 +62,9 @@ class MapperScannerRegistrar : ImportBeanDefinitionRegistrar, ResourceLoaderAwar
     val annoAttrs = AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(MapperScan::class.java.name))
     val scanner = ClassPathMapperScanner(registry)
 
-    scanner.resourceLoader = resourceLoader
+    scanner.resourceLoader = this.resourceLoader!!
 
-    val annotationClass = annoAttrs.getClass<Annotation>("annotationClass")
+    val annotationClass = annoAttrs!!.getClass<Annotation>("annotationClass")
     if (Annotation::class.java != annotationClass) {
       scanner.setAnnotationClass(annotationClass)
     }

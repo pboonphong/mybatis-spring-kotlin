@@ -15,19 +15,14 @@
  */
 package org.mybatis.spring.transaction
 
-import org.springframework.util.Assert.notNull
-
-import java.sql.Connection
-import java.sql.SQLException
-
-import javax.sql.DataSource
-
-import org.mybatis.logging.Logger
-import org.mybatis.logging.LoggerFactory
 import org.apache.ibatis.transaction.Transaction
+import org.mybatis.logging.LoggerFactory
 import org.springframework.jdbc.datasource.ConnectionHolder
 import org.springframework.jdbc.datasource.DataSourceUtils
 import org.springframework.transaction.support.TransactionSynchronizationManager
+import java.sql.Connection
+import java.sql.SQLException
+import javax.sql.DataSource
 
 /**
  * `SpringManagedTransaction` handles the lifecycle of a JDBC connection.
@@ -80,7 +75,7 @@ class SpringManagedTransaction(private val dataSource: DataSource) : Transaction
   private fun openConnection() {
     this.connection = DataSourceUtils.getConnection(this.dataSource)
     this.autoCommit = this.connection!!.autoCommit
-    this.isConnectionTransactional = DataSourceUtils.isConnectionTransactional(this.connection, this.dataSource)
+    this.isConnectionTransactional = DataSourceUtils.isConnectionTransactional(this.connection!!, this.dataSource)
 
     logger.debug {
         "JDBC Connection [$connection] will" + (if (this.isConnectionTransactional) " " else " not ") + "be managed by Spring"}

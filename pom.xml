@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.mybatis</groupId>
     <artifactId>mybatis-parent</artifactId>
-    <version>28</version>
+    <version>29</version>
     <relativePath />
   </parent>
 
@@ -39,7 +39,7 @@
       <name>Alex Rykov</name>
       <email>Alex.Rykov@gmail.com</email>
     </contributor>
-  
+
     <contributor>
       <name>Andrius Juozapaitis</name>
       <email>andriusj@gmail.com</email>
@@ -108,8 +108,8 @@
     <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
     <osgi.import>org.springframework.batch.*;resolution:=optional,*</osgi.import>
     <osgi.dynamicImport>*</osgi.dynamicImport>
-    <spring.version>4.3.7.RELEASE</spring.version>
-    <kotlin.version>1.1.0</kotlin.version>
+    <spring.version>5.0.7.RELEASE</spring.version>
+    <kotlin.version>1.2.50</kotlin.version>
 
     <!-- Override: Animal Sniffer Signature -->
     <signature.group>org.codehaus.mojo.signature</signature.group>
@@ -133,7 +133,7 @@
     <dependency>
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis</artifactId>
-      <version>3.4.2</version>
+      <version>3.4.6</version>
       <scope>provided</scope>
     </dependency>
 
@@ -153,7 +153,7 @@
     <dependency>
       <groupId>org.springframework.batch</groupId>
       <artifactId>spring-batch-infrastructure</artifactId>
-      <version>4.0.0.M1</version>
+      <version>4.0.1.RELEASE</version>
       <scope>provided</scope>
     </dependency>
 
@@ -163,14 +163,14 @@
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jdbc</artifactId>
-      <version>4.0.4</version>
+      <version>4.0.6</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
-      <version>10.13.1.1</version>
+      <version>10.14.2.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -184,7 +184,7 @@
     <dependency>
       <groupId>org.jboss.byteman</groupId>
       <artifactId>byteman-bmunit</artifactId>
-      <version>3.0.6</version>
+      <version>4.0.2</version>
       <scope>test</scope>
     </dependency>
 
@@ -205,14 +205,14 @@
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.3.4</version>
+      <version>2.4.1</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.7</version>
+      <version>2.11.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -244,7 +244,7 @@
     <dependency>
       <groupId>com.mockrunner</groupId>
       <artifactId>mockrunner-ejb</artifactId>
-      <version>1.1.2</version>
+      <version>2.0.1</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -260,7 +260,7 @@
     <dependency>
       <groupId>com.mockrunner</groupId>
       <artifactId>mockrunner-jdbc</artifactId>
-      <version>1.1.2</version>
+      <version>2.0.1</version>
       <scope>test</scope>
     </dependency>
 
@@ -324,12 +324,55 @@
         <executions>
           <execution>
             <id>compile</id>
-            <goals> <goal>compile</goal> </goals>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <sourceDirs>
+                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                <sourceDir>${project.basedir}/src/main/java</sourceDir>
+              </sourceDirs>
+            </configuration>
           </execution>
-
           <execution>
             <id>test-compile</id>
             <goals> <goal>test-compile</goal> </goals>
+            <configuration>
+              <sourceDirs>
+                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                <sourceDir>${project.basedir}/src/test/java</sourceDir>
+              </sourceDirs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <!-- Replacing default-compile as it is treated specially by maven -->
+          <execution>
+            <id>default-compile</id>
+            <phase>none</phase>
+          </execution>
+          <!-- Replacing default-testCompile as it is treated specially by maven -->
+          <execution>
+            <id>default-testCompile</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>java-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>java-test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
